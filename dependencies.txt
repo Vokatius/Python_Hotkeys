@@ -1,0 +1,3 @@
+- pynput        (Keyboard listener)
+- infi.systray  (System tray icon)
+- pywin32       (Windows API access)
