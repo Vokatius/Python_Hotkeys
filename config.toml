@@ -49,7 +49,7 @@ goto_workpace_9 = '9'
 
 
 # Add application key from [applications] if you want a workspace 
-# to open the specified  application if not open already.
+# to open the specified application if not open already.
 [workspace_programs]
 workspace_1_open = 'web_browser'
 workspace_2_open = false
