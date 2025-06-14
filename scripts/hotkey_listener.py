@@ -1,29 +1,24 @@
-from pynput import keyboard
-from scripts.hotkey_functions import browser, last_window
 from scripts import config_loader
 from typing import Callable
+import keyboard
 
-shortcuts = config_loader.get_hotkeys()
+_shortcuts = config_loader.get_hotkeys()
+_hotkeys: dict[str, Callable[[], None]] = {}
 
-hotkeys: dict[str, Callable[[], None]] = {}
+def register_hotkey(hotkey_name: str, func: Callable[[], None]) -> None:
+    if(hotkey_name not in _shortcuts.keys()):
+        raise Exception(f"\"{hotkey_name}\" is not registered in the config file.")
 
-for shortcut_name in shortcuts:
-    shortcut_value = shortcuts[shortcut_name]
+    hotkey = _shortcuts[hotkey_name]
+    _hotkeys[hotkey] = func
 
-    match shortcut_name:
-        case 'focus_web_browser':
-            hotkeys[shortcut_value] = lambda: last_window.set_last_window(browser.focus_browser)
-
-        case 'goto_previous':
-            hotkeys[shortcut_value] = last_window.focus_last_window
-
-        case 'open_web_tab':
-            hotkeys[shortcut_value] = lambda: last_window.set_last_window(browser.open_new_tab)
-
-hotkeys_thread = keyboard.GlobalHotKeys(hotkeys)
+def register_hotkey_raw(hotkey: str, func: Callable[[], None]) -> None:
+    _hotkeys[hotkey] = func
 
 def start_hotkey_listener() -> None:
-    hotkeys_thread.start()
+    for (hotkey, func) in _hotkeys.items():
+        keyboard.add_hotkey(hotkey=hotkey, callback=func)
 
 def stop_hotkey_listener() -> None:
-    hotkeys_thread.stop()
+    keyboard.unhook_all()
+    keyboard.remove_all_hotkeys()

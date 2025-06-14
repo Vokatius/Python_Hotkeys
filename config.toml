@@ -2,41 +2,73 @@
 # The after changing the config.toml file, you need to restart 
 # the script for the changes to take effect.
 
-# If you dont want or need a hotkey, you can just delete the
-# line from the hotkeys section.
+
+# Special Key Bindings:
+#   alt
+#   ctrl
+#   shift
+#   left alt
+#   left ctrl
+#   left shift
+#   right alt
+#   right ctrl
+#   right shift
+#   alt gr
+
+#   windows key does *NOT* work
+
 
 [general]
 title = 'Custom Hotkeys'
 
+
+# If you dont want or need a hotkey, you can just delete the line from the hotkeys section.
 [hotkeys]
-focus_web_browser = '<alt>+t'
-open_web_tab = '<ctrl>+<space>'
-goto_previous = '<cmd>+z'
+focus_web_browser = 'alt gr+t'
+open_web_tab = 'ctrl+space'
+goto_previous_program = 'alt gr+z'
+goto_previous_workspace = 'alt+0'
+move_program_to_workspace = 'alt+space' #'goto_workpace_x' is appened as shortcut for workspace
+goto_workspace_with_program = 'alt+space+0' #'goto_workpace_x' is appened as shortcut for workspace
 
 [applications]
 web_browser = 'edge'
 
+[workspace_shortcuts]
+modifiers = 'alt'
+goto_workpace_1 = '1'
+goto_workpace_2 = '2'
+goto_workpace_3 = '3'
+goto_workpace_4 = '4'
+goto_workpace_5 = '5'
+goto_workpace_6 = '6'
+goto_workpace_7 = '7'
+goto_workpace_8 = '8'
+goto_workpace_9 = '9'
 
-# Special Key Bindings:
-# <ctrl>        : Control key
-# <alt>         : Alt key
-# <shift>       : Shift key
-# <cmd>         : Windows key
-# <alt_gr>      : AltGr key
-# <caps_lock>   : Caps Lock key
-# <tab>         : Tab key
-# <esc>         : Escape key
-# <enter>       : Enter/Return key
-# <space>       : Spacebar
-# <backspace>   : Backspace key
-# <delete>      : Delete key
-# <insert>      : Insert key
-# <home>        : Home key
-# <end>         : End key
-# <page_up>     : Page Up key
-# <page_down>   : Page Down key
-# <left>        : Arrow left
-# <right>       : Arrow right
-# <up>          : Arrow up
-# <down>        : Arrow down
-# <f1> - <f20>  : Function keys F1 - F20
+
+# Add application key from [applications] if you want a workspace 
+# to open the specified  application if not open already.
+#   Example:
+#   workspace_1_open = 'web_browser'
+[workspace_programs]
+workspace_1_open = false
+workspace_2_open = false
+workspace_3_open = false
+workspace_4_open = false
+workspace_6_open = false
+workspace_5_open = false
+workspace_7_open = false
+workspace_8_open = false
+workspace_9_open = false
+
+[workspace_names]
+workspace_1_name = 'Workspace 1'
+workspace_2_name = 'Workspace 2'
+workspace_3_name = 'Workspace 3'
+workspace_4_name = 'Workspace 4'
+workspace_5_name = 'Workspace 5'
+workspace_6_name = 'Workspace 6'
+workspace_7_name = 'Workspace 7'
+workspace_8_name = 'Workspace 8'
+workspace_9_name = 'Workspace 9'
