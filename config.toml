@@ -31,8 +31,10 @@ goto_previous_workspace = 'alt+0'
 move_program_to_workspace = 'alt+space' #'goto_workpace_x' is appened as shortcut for workspace
 goto_workspace_with_program = 'alt+space+0' #'goto_workpace_x' is appened as shortcut for workspace
 
+# Only specific app_ids are valid.
+# To get app_ids start the script and search for your programm in the newly generated "app_data.json"
 [applications]
-web_browser = 'edge'
+web_browser = 'MSEdge'
 
 [workspace_shortcuts]
 modifiers = 'alt'
@@ -49,10 +51,8 @@ goto_workpace_9 = '9'
 
 # Add application key from [applications] if you want a workspace 
 # to open the specified  application if not open already.
-#   Example:
-#   workspace_1_open = 'web_browser'
 [workspace_programs]
-workspace_1_open = false
+workspace_1_open = 'web_browser'
 workspace_2_open = false
 workspace_3_open = false
 workspace_4_open = false
@@ -63,7 +63,7 @@ workspace_8_open = false
 workspace_9_open = false
 
 [workspace_names]
-workspace_1_name = 'Workspace 1'
+workspace_1_name = 'Web browsing'
 workspace_2_name = 'Workspace 2'
 workspace_3_name = 'Workspace 3'
 workspace_4_name = 'Workspace 4'
