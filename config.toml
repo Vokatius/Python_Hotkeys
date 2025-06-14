@@ -22,6 +22,9 @@
 title = 'Custom Hotkeys'
 workspace_ignores_pinned = [1,2,4,5,6,7,8,9] # Sets which workspaces ignore pinned windows as open for default programs
 
+
+# To disable a hotkey set value to false
+# e.g. 'query_chatGPT = false'
 [hotkeys]
 open_web_tab = 'ctrl+space'                 # opens new browser tab in workspace with 'web_browser' as default
 query_chatGPT = 'alt+c'                     # same as 'open_web_tab' but uses ChatGPT. Needs "https://chatgpt.com/?q=%s&hints=search&ref=ext" as search engine with 'c' as shortcut

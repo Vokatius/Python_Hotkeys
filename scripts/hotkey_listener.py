@@ -10,6 +10,10 @@ def register_hotkey(hotkey_name: str, func: Callable[[], None]) -> None:
         raise Exception(f"\"{hotkey_name}\" is not registered in the config file.")
 
     hotkey = _shortcuts[hotkey_name]
+
+    if hotkey is False:
+        return
+
     _hotkeys[hotkey] = func
 
 def register_hotkey_raw(hotkey: str, func: Callable[[], None]) -> None:
