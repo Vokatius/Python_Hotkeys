@@ -13,12 +13,12 @@ def send_key(key_code: int, sleep: float|None = None) -> None:
         time.sleep(sleep)
     release_key(key_code)
 
-def send_shortcut(shortcut: list[int], sleep: float|None = None) -> None:
+def send_shortcut(shortcut: list[int], sleep_seconds: float|None = None) -> None:
     for key_code in shortcut:
         press_key(key_code)
 
-    if(sleep is not None):
-        time.sleep(sleep)
+    if(sleep_seconds is not None):
+        time.sleep(sleep_seconds)
 
-    for key_code in reversed(shortcut):
+    for key_code in shortcut:
         release_key(key_code)
