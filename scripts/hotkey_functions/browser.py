@@ -34,3 +34,17 @@ def open_new_tab() -> None:
     print("Sending shortcut")
     send_key.send_shortcut([VK_CODES['CONTROL'], VK_CODES['T']], 0.05)
     _new_tab_time = curtime
+
+# TODO: Fix problem of double executing properly
+_new_chat_time = 0
+def open_chatgpt() -> None:
+    curtime = time.time_ns()
+
+    global _new_chat_time
+    if curtime < _new_chat_time + (_COOLDOWN_TIME_MS * 1000000):
+        return
+
+    focus_browser()
+    send_key.send_shortcut([VK_CODES['CONTROL'], VK_CODES['T']], 0.05)
+    send_key.send_shortcut([VK_CODES['C'], VK_CODES['SPACE']], 0.05)
+    _new_chat_time = curtime

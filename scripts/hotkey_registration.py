@@ -19,5 +19,6 @@ for (num, workspace_key) in config_loader.get_workspace_keys().items():
 
 register_hotkey('goto_previous_program', last_window.focus_last_window)
 register_hotkey('open_web_tab', lambda: last_window.set_last_window(browser.open_new_tab))
-register_hotkey('goto_previous_workspace', workspace.goto_previous_workspace)
+register_hotkey('query_chatGPT', lambda: last_window.set_last_window(browser.open_chatgpt))
 register_hotkey('pin_current_window_toggle', workspace.toggle_pin_window)
+register_hotkey('goto_previous_workspace', workspace.goto_previous_workspace)
