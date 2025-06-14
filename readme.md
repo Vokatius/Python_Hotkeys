@@ -73,7 +73,7 @@ To add a new shortcut, follow these steps:
    my_new_shortcut = '<ctrl>+<alt>+n'
    ```
 
-3. Add your corresponding function in the `scripts/hotkey_functions/` directory either in a file or an exisiting one.
+3. Add your corresponding function in the `scripts/hotkey_functions/` directory either in a new file or an exisiting one.
 
 4. In the `scripts/hotkey_registration.py` file, append your new shortcut using `register_hotkey`<br>
    I would recommend to use a lambda function that wraps your new function with `last_window.set_last_window` to ensure that the last active window gets saved in case you change window focus.<br>
@@ -90,9 +90,9 @@ To add a new shortcut, follow these steps:
 The `foreground.py` module provides functions to bring a window to the foreground.
 
 >  ```python
->  send_to_foreground_name(name: str, callback: Callable[[], None]|None = None) -> None
+>  send_to_foreground_name(name: str) -> None
 > ```
-> Brings a window with the specified name to the foreground. If a callback function is provided, it will be executed after the window is brought to the foreground.
+> Brings a window with the specified name to the foreground.
 
 > ```python
 > send_to_foreground_hwnd(hwnd: int) -> None
@@ -118,12 +118,12 @@ The `send_key.py` module provides functions to simulate key presses and shortcut
 > Simulates a key release.
 
 > ```python 
-> send_key(key_code: int, sleep: float|None = None) -> None
+> send_key(key_code: int, sleep_seconds: float|None = None) -> None
 > ```
 > Simulates a single key press and release. If a sleep duration is provided, the function will pause for that amount of time before releasing the key.
 
 > ```python 
-> send_shortcut(shortcut: list[int], sleep: float|None = None) -> None
+> send_shortcut(shortcut: list[int], sleep_seconds: float|None = None) -> None
 > ```
 >  Simulates a sequence of key presses and releases to form a shortcut. If a sleep duration is provided, the function will pause for that amount of time after each key press.
 
@@ -153,7 +153,7 @@ The `open_program.py` module makes it easy to launch programs and determine whet
 > ```python
 > get_app_id(ptr: int | None) -> str | None
 > ```
-> Converts a raw pointer from the Windows API into an `app_id` string. Returns `None` if `ptr` itself is `None`. Used translate `AppView.appId` pointer.
+> Converts a raw pointer from the Windows API into an `app_id` string. Returns `None` if `ptr` itself is `None`. Used translate `AppView.appId` pointers.
 
 ### `workspace.py`
 The `workspace.py` module provides helpers for Windows Virtual Desktops—jump between workspaces, pin or unpin windows, shuffle apps around, and hop back to the previous desktop.
