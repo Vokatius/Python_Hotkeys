@@ -1,23 +1,25 @@
 from scripts.window_manipulation.virtual_key_codes import VK_CODES
 from scripts.window_manipulation import send_key
-from typing import Callable
+from scripts.window_manipulation import open_program
+from pyvda import get_apps_by_z_order
 
 import win32gui
 import time
 
-def send_to_foreground_name(name: str, callback: Callable[[], None]|None = None) -> None:
-    def cb(hwnd: int) -> None:
-        window_name = win32gui.GetWindowText(hwnd)
-        if name.lower() not in window_name.lower():
-            return
-        
-        _set_foreground(hwnd)
-        _ensure_foreground(hwnd)
+def send_to_foreground_name(name: str) -> None:
+    hwnd: int|None = None
+    for app in get_apps_by_z_order(current_desktop=False):
+        app_id = open_program.get_app_id(app.app_id)
+        if(app_id != name):
+            continue
 
-        if(callback is not None):
-            callback()
-                  
-    win32gui.EnumWindows(lambda hwnd, _: cb(hwnd), None)
+        hwnd = app.hwnd
+        break
+    
+    if hwnd is None:
+        return
+    
+    send_to_foreground_hwnd(hwnd)
 
 def send_to_foreground_hwnd(hwnd: int) -> None:        
     _set_foreground(hwnd)
