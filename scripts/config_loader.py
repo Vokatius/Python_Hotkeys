@@ -1,7 +1,8 @@
 import tomllib
 from collections import namedtuple
+from typing import Any
 
-def get_config() -> dict[str, dict[str, str]]:
+def get_config() -> dict[str, dict[str, Any]]:
     with open('config.toml', "rb") as config_pointer:
         config = tomllib.load(config_pointer)
 

@@ -30,8 +30,8 @@ def goto_workspace(workspace_num: int, app_id: str|None = None) -> None:
     _last_workspace = VirtualDesktop.current()
     VirtualDesktop.go(_get_workspace(workspace_num))
 
-    if app_id is not None:
-        open_program.open_app_if_closed(app_id)
+    if app_id is not None and not open_program.is_default_open(app_id, workspace_num):
+        open_program.open_app(app_id)
 
 def toggle_pin_window() -> None:
     current_window = AppView.current()
