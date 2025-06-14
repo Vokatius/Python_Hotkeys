@@ -9,4 +9,4 @@ def focus_browser() -> None:
     send_to_foreground_name(browser)
 
 def open_new_tab() -> None:
-    send_to_foreground_name(browser, lambda: send_key.send_shortcut([VK_CODES['CONTROL'], VK_CODES['T']]))
+    send_to_foreground_name(browser, lambda: send_key.send_shortcut([VK_CODES['CONTROL'], VK_CODES['T']], 10))
