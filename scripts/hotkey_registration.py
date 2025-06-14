@@ -17,7 +17,7 @@ for (num, workspace_key) in config_loader.get_workspace_keys().items():
     register_hotkey_raw(f"{_modifier_move}+{workspace_key}", lambda n=num: workspace.move_program_to_workspace(n))
     register_hotkey_raw(f"{_modifier_goto}+{workspace_key}", lambda n=num: workspace.goto_workspace_with_program(n))
 
-register_hotkey('focus_web_browser', lambda: last_window.set_last_window(browser.focus_browser))
 register_hotkey('goto_previous_program', last_window.focus_last_window)
 register_hotkey('open_web_tab', lambda: last_window.set_last_window(browser.open_new_tab))
 register_hotkey('goto_previous_workspace', workspace.goto_previous_workspace)
+register_hotkey('pin_current_window_toggle', workspace.toggle_pin_window)

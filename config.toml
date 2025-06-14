@@ -1,5 +1,5 @@
 # IMPORTANT: 
-# The after changing the config.toml file, you need to restart 
+# After changing the config.toml file, you need to restart 
 # the script for the changes to take effect.
 
 
@@ -21,15 +21,13 @@
 [general]
 title = 'Custom Hotkeys'
 
-
-# If you dont want or need a hotkey, you can just delete the line from the hotkeys section.
 [hotkeys]
-focus_web_browser = 'alt gr+t'
 open_web_tab = 'ctrl+space'
+pin_current_window_toggle = 'alt+l'         # makes window visible on each workspace
 goto_previous_program = 'alt gr+z'
 goto_previous_workspace = 'alt+0'
-move_program_to_workspace = 'alt+space' #'goto_workpace_x' is appened as shortcut for workspace
-goto_workspace_with_program = 'alt+space+0' #'goto_workpace_x' is appened as shortcut for workspace
+move_program_to_workspace = 'alt+space'     # 'goto_workpace_x' is appened as shortcut for workspace
+goto_workspace_with_program = 'alt+space+0' # 'goto_workpace_x' is appened as shortcut for workspace
 
 # Only specific app_ids are valid.
 # To get app_ids start the script and search for your programm in the newly generated "app_data.json"
@@ -64,9 +62,9 @@ workspace_9_open = false
 
 [workspace_names]
 workspace_1_name = 'Web browsing'
-workspace_2_name = 'Workspace 2'
-workspace_3_name = 'Workspace 3'
-workspace_4_name = 'Workspace 4'
+workspace_2_name = 'Programming 1'
+workspace_3_name = 'Programming 2'
+workspace_4_name = 'Programming 3'
 workspace_5_name = 'Workspace 5'
 workspace_6_name = 'Workspace 6'
 workspace_7_name = 'Workspace 7'

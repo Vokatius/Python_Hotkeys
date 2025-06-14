@@ -33,6 +33,13 @@ def goto_workspace(workspace_num: int, app_id: str|None = None) -> None:
     if app_id is not None:
         open_program.open_app_if_closed(app_id)
 
+def toggle_pin_window() -> None:
+    current_window = AppView.current()
+
+    if current_window.is_pinned():
+        current_window.unpin()
+    else:
+        current_window.pin()
 def goto_previous_workspace() -> None:
     global _last_workspace
     if _last_workspace is None:
