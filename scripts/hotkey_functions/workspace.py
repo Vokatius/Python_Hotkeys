@@ -1,5 +1,6 @@
 from pyvda import VirtualDesktop, get_virtual_desktops, AppView
 from scripts import config_loader
+from scripts.window_manipulation import open_program
 
 _workspace_names = config_loader.get_workspace_names()
 _last_workspace: VirtualDesktop|None = None
@@ -24,13 +25,13 @@ def _get_workspace(num: int) -> VirtualDesktop:
     
     return target
 
-def goto_workspace(workspace_num: int, open_program: str|None = None) -> None:
-    if open_program is not None:
-        raise NotImplementedError("Open program functionality is not implemented yet.")
-
+def goto_workspace(workspace_num: int, app_id: str|None = None) -> None:       
     global _last_workspace
     _last_workspace = VirtualDesktop.current()
     VirtualDesktop.go(_get_workspace(workspace_num))
+
+    if app_id is not None:
+        open_program.open_app_if_closed(app_id)
 
 def goto_previous_workspace() -> None:
     global _last_workspace
