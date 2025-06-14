@@ -3,7 +3,7 @@ from ctypes import cast, c_wchar_p
 import AppOpener
 
 def open_app(app_id: str) -> None:
-    AppOpener.open(app_id, match_closest=True)
+    AppOpener.open(app_id, match_closest=True, output=False)
 
 def open_app_if_closed(app_id: str) -> None:
     if is_program_open(app_id):
