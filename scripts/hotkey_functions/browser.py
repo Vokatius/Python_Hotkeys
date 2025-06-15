@@ -31,7 +31,6 @@ def open_new_tab() -> None:
         return
 
     focus_browser()
-    print("Sending shortcut")
     send_key.send_shortcut([VK_CODES['CONTROL'], VK_CODES['T']], 0.05)
     _new_tab_time = curtime
 
