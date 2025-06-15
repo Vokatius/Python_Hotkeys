@@ -2,24 +2,25 @@ import tomllib
 from collections import namedtuple
 from typing import Any
 
-def get_config() -> dict[str, dict[str, Any]]:
+def _get_config() -> dict[str, dict[str, Any]]:
     with open('config.toml', "rb") as config_pointer:
         config = tomllib.load(config_pointer)
-
     return config
 
+CONFIG = _get_config()
+
 def get_script_name() -> str:
-    return get_config()['general']['title']
+    return  CONFIG['general']['title']
 
 def get_hotkeys() -> dict[str, str]:
-    return get_config()['hotkeys']
+    return  CONFIG['hotkeys']
 
 def get_applications() -> dict[str, str]:
-    return get_config()['applications']
+    return  CONFIG['applications']
 
 def get_workspace_keys() -> dict[int, str]:
     workspaces: dict[int, str] = {}
-    for (key, hotkey) in get_config()['workspace_shortcuts'].items():
+    for (key, hotkey) in  CONFIG['workspace_shortcuts'].items():
         if(key == 'modifiers'):
             continue
 
@@ -29,7 +30,7 @@ def get_workspace_keys() -> dict[int, str]:
     return workspaces
 
 def get_workspace_hotkeys() -> dict[int, str]:
-    modifiers = get_config()['workspace_shortcuts']['modifiers']
+    modifiers =  CONFIG['workspace_shortcuts']['modifiers']
 
     workspaces: dict[int, str] = {}
     for (num, hotkey) in get_workspace_keys().items():
@@ -39,7 +40,7 @@ def get_workspace_hotkeys() -> dict[int, str]:
 
 def get_workspace_programs() -> dict[int, str]:
     workspaces: dict[int, str] = {}
-    for (key, hotkey) in get_config()['workspace_programs'].items():
+    for (key, hotkey) in  CONFIG['workspace_programs'].items():
         workspace_num = int(key.split('_')[1])
         workspaces[workspace_num] = hotkey
 
@@ -47,7 +48,7 @@ def get_workspace_programs() -> dict[int, str]:
 
 def get_workspace_names() -> dict[int, str]:
     workspaces: dict[int, str] = {}
-    for (key, name) in get_config()['workspace_names'].items():
+    for (key, name) in  CONFIG['workspace_names'].items():
         workspace_num = int(key.split('_')[1])
         workspaces[workspace_num] = name
 

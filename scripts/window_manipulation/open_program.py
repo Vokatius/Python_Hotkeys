@@ -24,7 +24,7 @@ def is_default_open(app_id: str, workspace_num: int) -> bool:
         if app_id != get_app_id(app.app_id):
             continue
 
-        ignored_workspaces = config_loader.get_config()['general']['workspace_ignores_pinned']            
+        ignored_workspaces = config_loader.CONFIG['general']['workspace_ignores_pinned']            
         if workspace_num in ignored_workspaces and app.is_pinned() == False:
             return True
 
