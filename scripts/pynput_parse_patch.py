@@ -20,7 +20,6 @@ from functools import wraps
 from typing import Any
 
 _BASE_PARSE = HotKey.parse
-_BASE_EQ = KeyCode.__eq__
 _BASE_CONVERTER = Listener._event_to_key
 
 _HOTKEYS: dict[str, int] = {
