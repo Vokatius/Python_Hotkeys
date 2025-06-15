@@ -2,22 +2,6 @@
 # After changing the config.toml file, you need to restart 
 # the script for the changes to take effect.
 
-
-# Special Key Bindings:
-#   alt
-#   ctrl
-#   shift
-#   left alt
-#   left ctrl
-#   left shift
-#   right alt
-#   right ctrl
-#   right shift
-#   alt gr
-
-#   windows key does *NOT* work
-
-
 [general]
 title = 'Custom Hotkeys'
 workspace_ignores_pinned = [1,2,4,5,6,7,8,9] # Sets which workspaces ignore pinned windows as open for default programs
@@ -26,13 +10,13 @@ workspace_ignores_pinned = [1,2,4,5,6,7,8,9] # Sets which workspaces ignore pinn
 # To disable a hotkey set value to false
 # e.g. 'query_chatGPT = false'
 [hotkeys]
-open_web_tab = 'ctrl+space'                 # opens new browser tab in workspace with 'web_browser' as default
-query_chatGPT = 'alt+c'                     # same as 'open_web_tab' but uses ChatGPT. Needs "https://chatgpt.com/?q=%s&hints=search&ref=ext" as search engine with 'c' as shortcut
-pin_current_window_toggle = 'alt+l'         # makes window visible on each workspace
-goto_previous_program = 'alt gr+z'
-goto_previous_workspace = 'alt+0'
-move_program_to_workspace = 'alt+space'     # 'goto_workpace_x' is appened as shortcut for workspace
-goto_workspace_with_program = 'alt+space+0' # 'goto_workpace_x' is appened as shortcut for workspace
+open_web_tab = '<ctrl>+<space>'                         # opens new browser tab in workspace with 'web_browser' as default
+query_chatGPT = '<alt>+c'                               # same as 'open_web_tab' but uses ChatGPT. Needs "https://chatgpt.com/?q=%s&hints=search&ref=ext" as search engine with 'c' as shortcut
+pin_current_window_toggle = '<alt>+l'                   # makes window visible on each workspace
+goto_previous_program = '<alt_gr>+z'
+goto_previous_workspace = '<alt>+<num_0>'
+move_program_to_workspace = '<alt>+<space>'             # 'goto_workpace_x' is appened as shortcut for workspace
+goto_workspace_with_program = '<alt>+<space>+<num_0>'   # 'goto_workpace_x' is appened as shortcut for workspace
 
 # Only specific app_ids are valid.
 # To get app_ids start the script and search for your programm in the newly generated "app_data.json"
@@ -40,16 +24,16 @@ goto_workspace_with_program = 'alt+space+0' # 'goto_workpace_x' is appened as sh
 web_browser = 'MSEdge'
 
 [workspace_shortcuts]
-modifiers = 'alt'
-goto_workpace_1 = '1'
-goto_workpace_2 = '2'
-goto_workpace_3 = '3'
-goto_workpace_4 = '4'
-goto_workpace_5 = '5'
-goto_workpace_6 = '6'
-goto_workpace_7 = '7'
-goto_workpace_8 = '8'
-goto_workpace_9 = '9'
+modifiers = '<cmd>'
+goto_workpace_1 = '<num_1>'
+goto_workpace_2 = '<num_2>'
+goto_workpace_3 = '<num_3>'
+goto_workpace_4 = '<num_4>'
+goto_workpace_5 = '<num_5>'
+goto_workpace_6 = '<num_6>'
+goto_workpace_7 = '<num_7>'
+goto_workpace_8 = '<num_8>'
+goto_workpace_9 = '<num_9>'
 
 
 # Add application key from [applications] if you want a workspace 
@@ -75,3 +59,57 @@ workspace_6_name = 'Workspace 6'
 workspace_7_name = 'Workspace 7'
 workspace_8_name = 'Workspace 8'
 workspace_9_name = 'Workspace 9'
+
+
+# Special Key Bindings:
+# <alt>  
+# <alt_l>  
+# <alt_r>  
+# <alt_gr>  
+# <backspace>  
+# <caps_lock>  
+# <cmd>  
+# <cmd_l>  
+# <cmd_r>  
+# <ctrl>  
+# <ctrl_l>  
+# <ctrl_r>  
+# <delete>  
+# <down>  
+# <end>  
+# <enter>  
+# <esc>  
+# <f1> … <f20>  
+# <home>  
+# <insert>  
+# <left>  
+# <menu>  
+# <media_play_pause>  
+# <media_previous>  
+# <media_next>  
+# <media_volume_down>  
+# <media_volume_mute>  
+# <media_volume_up>  
+# <num_lock>
+# <num_0>
+# <num_1>
+# <num_2>
+# <num_3>
+# <num_4>
+# <num_5>
+# <num_6>
+# <num_7>
+# <num_8>
+# <num_9>
+# <page_down>  
+# <page_up>  
+# <pause>  
+# <print_screen>  
+# <right>  
+# <scroll_lock>  
+# <shift>  
+# <shift_l>  
+# <shift_r>  
+# <space>  
+# <tab>  
+# <up> 

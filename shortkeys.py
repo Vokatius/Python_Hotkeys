@@ -1,4 +1,6 @@
-from scripts import hotkey_listener, system_tray, hotkey_registration as _
+from scripts import hotkey_registration as _
+from scripts import pynput_parse_patch as _
+from scripts import hotkey_listener, system_tray
 import AppOpener
 
 AppOpener.mklist(output=False)
