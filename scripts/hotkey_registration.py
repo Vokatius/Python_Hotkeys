@@ -14,8 +14,10 @@ for (num, workspace_conf) in config_loader.get_workspace_config().items():
 _modifier_move = config_loader.get_hotkeys()['move_program_to_workspace']
 _modifier_goto = config_loader.get_hotkeys()['goto_workspace_with_program']
 for (num, workspace_key) in config_loader.get_workspace_keys().items():
-    register_hotkey_raw(f"{_modifier_move}+{workspace_key}", lambda n=num: workspace.move_program_to_workspace(n))
-    register_hotkey_raw(f"{_modifier_goto}+{workspace_key}", lambda n=num: workspace.goto_workspace_with_program(n))
+    if _modifier_move is not False:
+        register_hotkey_raw(f"{_modifier_move}+{workspace_key}", lambda n=num: workspace.move_program_to_workspace(n))
+    if _modifier_goto is not False:
+        register_hotkey_raw(f"{_modifier_goto}+{workspace_key}", lambda n=num: workspace.goto_workspace_with_program(n))
 
 register_hotkey('goto_previous_program', last_window.focus_last_window)
 register_hotkey('open_web_tab', lambda: last_window.set_last_window(browser.open_new_tab))
