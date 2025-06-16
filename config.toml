@@ -5,7 +5,8 @@
 [general]
 title = 'Custom Hotkeys'
 enable_logging = true
-disabled_log_levels = ['VERBOSE']                       # Allowed values are: 'VERBOSE', 'INFO', 'DEBUG', 'WARNING', 'ERROR', 'CRITICAL'= [1,2,4,5,6,7,8,9]            # Sets which workspaces ignore pinned windows as open for default programs
+disabled_log_levels = ['VERBOSE']                       # Allowed values are: 'VERBOSE', 'INFO', 'DEBUG', 'WARNING', 'ERROR', 'CRITICAL'
+workspace_ignores_pinned = [1,2,4,5,6,7,8,9]            # Sets which workspaces ignore pinned windows as open for default programs
 
 
 # To disable a hotkey set value to false
@@ -66,9 +67,8 @@ workspace_7_name = 'Workspace 7'
 workspace_8_name = 'Workspace 8'
 workspace_9_name = 'Workspace 9'
 
-# Set a home workspace for a program. This will open the specified 
-# workspace when the program is launched & allow the program to be
-# easily moved to its home.
+# Set a home workspace for a program. This will always open the 
+# program in the specified workspace when launched.
 #
 # Allowed Values : Only integers from 1 - 9 are allowed
 # Allowed Keys : Only keys from [applications] are allowed
