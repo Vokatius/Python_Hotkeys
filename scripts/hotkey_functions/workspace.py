@@ -1,6 +1,6 @@
-from pyvda import VirtualDesktop, get_virtual_desktops, AppView
+from pyvda import VirtualDesktop, get_virtual_desktops, AppView, get_apps_by_z_order
 from scripts import config_loader
-from scripts.window_manipulation import open_program
+from scripts.window_manipulation import open_program, foreground
 from scripts.logger import write_entry, LogLevel
 from scripts.window_manipulation.open_program import get_app_id
 
@@ -37,6 +37,8 @@ def goto_workspace(workspace_num: int, app_id: str|None = None) -> None:
         write_entry(f"Opening default app {app_id} in workspace {workspace_num}")
         open_program.open_app(app_id)
 
+    _focus_top_window()
+
 def toggle_pin_window() -> None:
     current_window = AppView.current()
 
@@ -54,15 +56,30 @@ def goto_previous_workspace() -> None:
     
     cur = VirtualDesktop.current()
     VirtualDesktop.go(_last_workspace)
+    _focus_top_window()
     _last_workspace = cur
 
-def move_program_to_workspace(workspace_num: int) -> None:
+def move_program_to_workspace(workspace_num: int, app: AppView|None = None) -> None:
     target = _get_workspace(workspace_num)
-    window = AppView.current()
+    window = AppView.current() if app is None else app
     write_entry(f"Moving program {get_app_id(window.app_id)} to workspace {workspace_num}")
 
     window.move(target)
 
-def goto_workspace_with_program(workspace_num: int) -> None:
-    move_program_to_workspace(workspace_num)
+def goto_workspace_with_program(workspace_num: int, app: AppView|None = None) -> None:
+    move_program_to_workspace(workspace_num, app)
     goto_workspace(workspace_num)
+
+def _focus_top_window() -> None:
+    apps = get_apps_by_z_order()
+
+    if len(apps) < 1:
+        return
+
+    top_window = apps[0]
+
+    write_entry(f"Focusing top window {get_app_id(top_window.app_id)}")
+    if foreground.is_foreground(top_window.hwnd):
+        return
+    
+    foreground.send_to_foreground_hwnd(top_window.hwnd)
