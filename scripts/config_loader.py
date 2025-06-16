@@ -83,6 +83,7 @@ def get_home_apps() -> dict[str, int]:
     apps : dict[str, int] = {}
 
     for (app, workspace) in CONFIG['program_home_workspace'].items():
-        apps[app] = int(workspace)
+        app_id = get_applications()[app]
+        apps[app_id] = int(workspace)
 
     return apps
