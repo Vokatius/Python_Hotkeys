@@ -1,6 +1,7 @@
 import tomllib
 from collections import namedtuple
 from typing import Any
+from scripts.log_levels import LogLevel
 
 def _get_config() -> dict[str, dict[str, Any]]:
     with open('config.toml', "rb") as config_pointer:
@@ -8,6 +9,17 @@ def _get_config() -> dict[str, dict[str, Any]]:
     return config
 
 CONFIG = _get_config()
+
+def get_logging_allowed() -> bool:
+    return CONFIG['general']['enable_logging']
+
+def get_disabled_log_levels() -> list[LogLevel]:
+    ret: list[LogLevel] = []
+
+    for level_str in list[str](CONFIG['general']['disabled_log_levels']):
+        ret.append(LogLevel[level_str.upper()])
+
+    return ret
 
 def get_script_name() -> str:
     return  CONFIG['general']['title']
@@ -66,3 +78,11 @@ def get_workspace_config() -> dict[int, Workspace_config]:
         workspaces[i+1] = Workspace_config(hotkey=hotkeys[i+1], program=programs[i+1], name=names[i+1], number=i+1)
 
     return workspaces
+
+def get_home_apps() -> dict[str, int]:
+    apps : dict[str, int] = {}
+
+    for (app, workspace) in CONFIG['program_home_workspace'].items():
+        apps[app] = int(workspace)
+
+    return apps

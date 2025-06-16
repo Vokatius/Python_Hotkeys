@@ -1,3 +1,4 @@
+from scripts.logger import write_entry, LogLevel
 from scripts import config_loader
 from typing import Callable
 from pynput import keyboard
@@ -7,6 +8,7 @@ _hotkeys: dict[str, Callable[[], None]] = {}
 _hotkey_listener: keyboard.GlobalHotKeys|None = None
 
 def register_hotkey(hotkey_name: str, func: Callable[[], None]) -> None:
+    write_entry(f"Registering hotkey {hotkey_name} with function {func.__name__}")
     if(hotkey_name not in _shortcuts.keys()):
         raise Exception(f"\"{hotkey_name}\" is not registered in the config file.")
 
@@ -16,16 +18,21 @@ def register_hotkey(hotkey_name: str, func: Callable[[], None]) -> None:
         return
 
     _hotkeys[hotkey] = func
+    write_entry(f"Registration complete forhotkey {hotkey_name} with function {func.__name__}")
 
 def register_hotkey_raw(hotkey: str, func: Callable[[], None]) -> None:
+    write_entry(f"Registering raw hotkey {hotkey} with function {func.__name__}")
     _hotkeys[hotkey] = func
+    write_entry(f"Registration complete for raw hotkey {hotkey} with function {func.__name__}")
 
 def start_hotkey_listener() -> None:
+    write_entry(f"Starting hotkey listener")
     global _hotkey_listener
     _hotkey_listener = keyboard.GlobalHotKeys(_hotkeys)
     _hotkey_listener.start()
 
 def stop_hotkey_listener() -> None:
+    write_entry(f"Stopping hotkey listener")
     global _hotkey_listener
 
     if _hotkey_listener is None:

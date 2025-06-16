@@ -13,9 +13,10 @@
 #   I think this safe as all other keys I watched also have only NONE as their '_PLATFORM_EXTENSIONS',
 #
 
-from scripts.window_manipulation.virtual_key_codes import VK_CODES
-from pynput.keyboard import HotKey, KeyCode
 from pynput.keyboard._win32 import Listener, Key as winKey, KeyCode as winKeyCode
+from scripts.window_manipulation.virtual_key_codes import VK_CODES
+from scripts.logger import write_entry, LogLevel
+from pynput.keyboard import HotKey, KeyCode
 from functools import wraps
 from typing import Any
 
@@ -38,8 +39,10 @@ _HOTKEYS: dict[str, int] = {
 @wraps(_BASE_PARSE)
 def _parse_wrapper(keys: str) -> list[KeyCode]:
     if '<num_' in keys:
+        write_entry(f"Patching pynput parse to handle numeric keys. ({keys})")
         for (literal, code) in _HOTKEYS.items():
             keys = keys.replace(literal, f'<{code}>')
+        write_entry(f"Patching parsing complete. ({keys})")
 
     return _BASE_PARSE(keys)
 
@@ -51,6 +54,7 @@ def _convert_wrapper(self: Listener, msg: Any, vk: int|None) -> (winKey | winKey
 
     if type(key_res) == winKeyCode and key_res.vk in _HOTKEYS.values():
         for f in winKeyCode._PLATFORM_EXTENSIONS:
+            write_entry(f"Patching pynput to override _PLATFORM_EXTENSIONS. Overwriting \"{f}\" from \"{getattr(key_res, f)}\" to \"None\". ({key_res.vk})", LogLevel.VERBOSE)
             setattr(key_res, f, None)
 
     return key_res

@@ -4,24 +4,30 @@
 
 [general]
 title = 'Custom Hotkeys'
-workspace_ignores_pinned = [1,2,4,5,6,7,8,9] # Sets which workspaces ignore pinned windows as open for default programs
+enable_logging = true
+disabled_log_levels = ['VERBOSE']                       # Allowed values are: 'VERBOSE', 'INFO', 'DEBUG', 'WARNING', 'ERROR', 'CRITICAL'= [1,2,4,5,6,7,8,9]            # Sets which workspaces ignore pinned windows as open for default programs
 
 
 # To disable a hotkey set value to false
 # e.g. 'query_chatGPT = false'
 [hotkeys]
-open_web_tab = '<ctrl>+<space>'                         # opens new browser tab in workspace with 'web_browser' as default
-query_chatGPT = '<alt>+c'                               # same as 'open_web_tab' but uses ChatGPT. Needs "https://chatgpt.com/?q=%s&hints=search&ref=ext" as search engine with 'c' as shortcut
+open_web_tab = '<alt>+<space>'                          # opens new browser tab in workspace with 'web_browser' as default
+query_chatGPT = '<alt>+a'                               # same as 'open_web_tab' but uses ChatGPT. Needs "https://chatgpt.com/?q=%s&hints=search&ref=ext" as search engine with 'c' as shortcut
 pin_current_window_toggle = '<alt>+l'                   # makes window visible on each workspace
-goto_previous_program = '<alt_gr>+z'
-goto_previous_workspace = '<alt>+<num_0>'
-move_program_to_workspace = '<alt>+<space>'             # 'goto_workpace_x' is appened as shortcut for workspace
-goto_workspace_with_program = '<alt>+<space>+<num_0>'   # 'goto_workpace_x' is appened as shortcut for workspace
+goto_previous_program = '<alt>+z'
+goto_previous_workspace = '<cmd>+<num_0>'
+move_program_to_workspace = '<cmd>+<space>'             # 'goto_workpace_x' is appened as shortcut for workspace
+#move_program_to_home = '<cmd>+<space>+h'                # moves program to home workspace
+goto_workspace_with_program = '<cmd>+<space>+<num_0>'   # 'goto_workpace_x' is appened as shortcut for workspace
 
 # Only specific app_ids are valid.
 # To get app_ids start the script and search for your programm in the newly generated "app_data.json"
 [applications]
 web_browser = 'MSEdge'
+vs_code = 'Microsoft.VisualStudioCode'
+vs_2022 = 'VisualStudio.c8107aec'
+db_manager = '{6D809377-6AF0-444B-8957-A3773F02200E}\\MySQL\\MySQL Workbench 8.0 CE\\MySQLWorkbench.exe'
+terminal = 'Microsoft.WindowsTerminal_8wekyb3d8bbwe!App'
 
 [workspace_shortcuts]
 modifiers = '<cmd>'
@@ -51,15 +57,27 @@ workspace_9_open = false
 
 [workspace_names]
 workspace_1_name = 'Web browsing'
-workspace_2_name = 'Programming 1'
-workspace_3_name = 'Programming 2'
-workspace_4_name = 'Programming 3'
-workspace_5_name = 'Workspace 5'
+workspace_2_name = 'VS Code'
+workspace_3_name = 'Real IDEs'
+workspace_4_name = 'Database'
+workspace_5_name = 'Debugging'
 workspace_6_name = 'Workspace 6'
 workspace_7_name = 'Workspace 7'
 workspace_8_name = 'Workspace 8'
 workspace_9_name = 'Workspace 9'
 
+# Set a home workspace for a program. This will open the specified 
+# workspace when the program is launched & allow the program to be
+# easily moved to its home.
+#
+# Allowed Values : Only integers from 1 - 9 are allowed
+# Allowed Keys : Only keys from [applications] are allowed
+[program_home_workspace]
+web_browser = 1
+vs_code = 2
+vs_2022 = 3
+db_manager = 4
+terminal = 5
 
 # Special Key Bindings:
 # <alt>  
