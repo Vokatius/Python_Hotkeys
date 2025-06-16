@@ -66,6 +66,21 @@ def move_program_to_workspace(workspace_num: int, app: AppView|None = None) -> N
 
     window.move(target)
 
+def move_program_to_home(app: AppView|None = None) -> None:
+    window = AppView.current() if app is None else app
+    app_id = str(get_app_id(window.app_id))
+    HOMES = config_loader.get_home_apps()
+
+    if app_id not in HOMES.keys():
+        write_entry(f"App ID {app_id} not in home apps list.", LogLevel.WARNING)
+        return
+
+    home_workspace_id = HOMES[app_id]
+    home_workspace = _get_workspace(home_workspace_id)
+
+    write_entry(f"Moving program {app_id} to home workspace {home_workspace.name}")
+    window.move(home_workspace)
+
 def goto_workspace_with_program(workspace_num: int, app: AppView|None = None) -> None:
     move_program_to_workspace(workspace_num, app)
     goto_workspace(workspace_num)

@@ -22,3 +22,4 @@ register_hotkey('open_web_tab', lambda: last_window.set_last_window(browser.open
 register_hotkey('query_chatGPT', lambda: last_window.set_last_window(browser.open_chatgpt))
 register_hotkey('pin_current_window_toggle', workspace.toggle_pin_window)
 register_hotkey('goto_previous_workspace', workspace.goto_previous_workspace)
+register_hotkey('move_program_to_home', workspace.move_program_to_home) 

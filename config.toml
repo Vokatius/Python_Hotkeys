@@ -12,14 +12,14 @@ workspace_ignores_pinned = [1,2,4,5,6,7,8,9]            # Sets which workspaces 
 # To disable a hotkey set value to false
 # e.g. 'query_chatGPT = false'
 [hotkeys]
-open_web_tab = '<alt>+<space>'                          # opens new browser tab in workspace with 'web_browser' as default
+open_web_tab = '<alt>+s'                                # opens new browser tab in workspace with 'web_browser' as default
 query_chatGPT = '<alt>+a'                               # same as 'open_web_tab' but uses ChatGPT. Needs "https://chatgpt.com/?q=%s&hints=search&ref=ext" as search engine with 'c' as shortcut
 pin_current_window_toggle = '<alt>+l'                   # makes window visible on each workspace
 goto_previous_program = '<alt>+z'
 goto_previous_workspace = '<cmd>+<num_0>'
-move_program_to_workspace = '<cmd>+<space>'             # 'goto_workpace_x' is appened as shortcut for workspace
-#move_program_to_home = '<cmd>+<space>+h'                # moves program to home workspace
-goto_workspace_with_program = '<cmd>+<space>+<num_0>'   # 'goto_workpace_x' is appened as shortcut for workspace
+move_program_to_workspace = false                       # 'goto_workpace_x' is appened as shortcut for workspace
+move_program_to_home = '<cmd>+<space>+h'                # moves program to home workspace
+goto_workspace_with_program = '<cmd>+<space>'           # 'goto_workpace_x' is appened as shortcut for workspace
 
 # Only specific app_ids are valid.
 # To get app_ids start the script and search for your programm in the newly generated "app_data.json"
