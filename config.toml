@@ -27,7 +27,7 @@ goto_workspace_with_program = '<cmd>+<space>'           # 'goto_workpace_x' is a
 web_browser = 'MSEdge'
 vs_code = 'Microsoft.VisualStudioCode'
 vs_2022 = 'VisualStudio.c8107aec'
-db_manager = '{6D809377-6AF0-444B-8957-A3773F02200E}\\MySQL\\MySQL Workbench 8.0 CE\\MySQLWorkbench.exe'
+db_manager = '{6D809377-6AF0-444B-8957-A3773F02200E}\MySQL\MySQL Workbench 8.0 CE\MySQLWorkbench.exe'
 terminal = 'Microsoft.WindowsTerminal_8wekyb3d8bbwe!App'
 
 [workspace_shortcuts]
