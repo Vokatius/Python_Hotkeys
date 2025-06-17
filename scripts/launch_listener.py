@@ -1,128 +1,101 @@
 from scripts.window_manipulation import open_program
 from scripts.hotkey_functions import workspace
+from scripts.win_api.event_codes import WinEvent, WinEventFlags, WinEventMessages, WinObjectIdentifiers
+from scripts.win_api import win_event_loop, win_common
 from scripts import config_loader
 from scripts.logger import write_entry, LogLevel
 from threading import Thread
-from ctypes import wintypes
 from pyvda import AppView, get_apps_by_z_order
-from typing import Any
+from datetime import datetime
 import threading
-import psutil
-import ctypes
 import time
-
-# Event contants see:
-# https://learn.microsoft.com/en-us/windows/win32/winauto/event-constants
-_EVENT_OBJECT_SHOW    = 0x8002
-_EVENT_OBJECT_DESTROY = 0x8001
-_WINEVENT_OUTOFCONTEXT= 0x0000
-_OBJID_WINDOW         = 0x00000000
-_WM_QUIT              = 0x0012
 
 _HOME_APPS: dict[str, int] = config_loader.get_home_apps()
 
 _opened_programs: set[int] = set()
+_message_thread: Thread|None = None
 
-_message_thread: threading.Thread|None = None
-
-_hook_create: Any = None
-_hook_destroy: Any = None
-
-WinEventProcType = ctypes.WINFUNCTYPE(
-    None, wintypes.HANDLE, wintypes.DWORD, wintypes.HWND,
-          wintypes.LONG, wintypes.LONG, wintypes.DWORD, wintypes.DWORD
-)
-
-@WinEventProcType
-def _on_window_event(hWinEventHook, event, hwnd, idObject, idChild, nan, _):
-    if event == _EVENT_OBJECT_DESTROY:
-        pid = wintypes.DWORD()
-        ctypes.windll.user32.GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
+def _on_window_event(event: WinEvent, hwnd: int, object_id: WinObjectIdentifiers|int, child_id: int, thread_id: int, event_time: datetime):
+    if event == WinEvent.EVENT_OBJECT_DESTROY:
+        pid = win_common.get_pid(hwnd)
 
         global _opened_programs
-        if pid.value in _opened_programs:
+        if pid in _opened_programs:
             write_entry(f"CLOSED - HWND: {hwnd}")
-            _opened_programs.remove(pid.value)
+            _opened_programs.remove(pid)
     
         return
 
-    if event == _EVENT_OBJECT_SHOW and idObject == _OBJID_WINDOW:
+    if event == WinEvent.EVENT_OBJECT_SHOW and object_id == WinObjectIdentifiers.OBJID_WINDOW:
         finder_thread = Thread(target=_find_window_thread_func, args=(hwnd,), daemon=True)
         finder_thread.start()
 
-
 def _find_window_thread_func(hwnd: int) ->  None:
+    global _opened_programs
     app: AppView|None = None
 
     for _ in range(50):
         try:
-            app =  AppView(hwnd)
-
-            pid = wintypes.DWORD()
-            ctypes.windll.user32.GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
-
-            if open_program.get_app_id(app.app_id) is None:
-                name = "UNKNOWN"
-                try:
-                    name = psutil.Process(pid.value).name().lower()
-                except psutil.NoSuchProcess:
-                    pass
-
-                write_entry(f"UNKNOWN APP - HWND: {hwnd} - PID: {pid.value} - Executable: {name}", LogLevel.WARNING)
-
-            global _opened_programs
-            if(pid.value in _opened_programs):
-                return
-
-            _opened_programs.add(pid.value)
-
+            app = AppView(hwnd)
             break
-
         except: 
             write_entry(f"Error finding window with HWND: {hwnd}", LogLevel.DEBUG)
-
         time.sleep(0.1)
 
     if app is None:
         write_entry(f"Could not open window with HWND: {hwnd}", LogLevel.VERBOSE)
         return
     
-    app_id = str(open_program.get_app_id(app.app_id))
-    write_entry(f"OPENED - HWND: {hwnd}, Name: {app_id}")
-    
-    if  app_id not in _HOME_APPS.keys():
+    pid = win_common.get_pid(app.hwnd)
+    app_id = open_program.get_app_id(app.app_id)
+    if app_id is None:
+        name =  win_common.get_name(pid)
+        name = "UNKNOWN" if name is None else name
+        write_entry(f"UNKNOWN APP - HWND: {hwnd} - PID: {pid} - Executable: {name}", LogLevel.WARNING)
         return
+
+    if app_id not in _HOME_APPS.keys():
+        return
+
+    if pid in _opened_programs:
+        return
+
+    write_entry(f"OPENED - HWND: {hwnd}, Name: {app_id}")
+    _opened_programs.add(pid)
 
     home_workspace = _HOME_APPS[app_id]
     write_entry(f"Moving program {app_id} to home workspace {home_workspace}")
     workspace.goto_workspace_with_program(home_workspace, app)
 
-
 def _message_thread_func() -> None:
-    global _hook_create
-    global _hook_destroy
+    cb = win_event_loop.create_WinEventProcType(_on_window_event)
 
-    write_entry("Creating create hook...")
-    _hook_create = ctypes.windll.user32.SetWinEventHook(
-        _EVENT_OBJECT_SHOW, _EVENT_OBJECT_SHOW, 0,
-        _on_window_event, 0, 0, _WINEVENT_OUTOFCONTEXT
+    write_entry("Starting hooks...")
+    create_handle = win_event_loop.create_simple_hook (
+        WinEvent.EVENT_OBJECT_SHOW, 
+        WinEvent.EVENT_OBJECT_SHOW, 
+        cb
     )
-    if _hook_create is None:
-        raise ctypes.WinError()
     
-    write_entry("Creating destroy hook...")
-    _hook_destroy = ctypes.windll.user32.SetWinEventHook(
-        _EVENT_OBJECT_DESTROY, _EVENT_OBJECT_SHOW, 0,
-        _on_window_event, 0, 0, _WINEVENT_OUTOFCONTEXT
+    destroy_handle = win_event_loop.create_simple_hook (
+        WinEvent.EVENT_OBJECT_DESTROY, 
+        WinEvent.EVENT_OBJECT_DESTROY, 
+        cb
     )
-    if _hook_destroy is None:
-        raise ctypes.WinError()
 
-    msg = wintypes.MSG()
-    while ctypes.windll.user32.GetMessageA(ctypes.byref(msg), 0, 0, 0) != 0:
-        ctypes.windll.user32.TranslateMessage(ctypes.byref(msg))
-        ctypes.windll.user32.DispatchMessageA(ctypes.byref(msg))
-    write_entry(f"MESSAGE THREAD EXECUTION FINISHED.")
+    write_entry(f"Created handle: {create_handle}")
+
+    start_listener = win_event_loop.create_listener (
+        WinEventMessages.WM_NULL,
+        WinEventMessages.WM_NULL
+    )
+
+    write_entry("Starting listener...")
+    start_listener()
+
+    write_entry("Stopping hooks...")
+    win_event_loop.drop_hook(create_handle)
+    win_event_loop.drop_hook(destroy_handle)
 
 def start_listener() -> None:
     global _opened_programs
@@ -130,10 +103,9 @@ def start_listener() -> None:
 
     write_entry("Starting listener...")
     for app in get_apps_by_z_order(current_desktop=False):
-        pid = wintypes.DWORD()
-        ctypes.windll.user32.GetWindowThreadProcessId(app.hwnd, ctypes.byref(pid))
-        if pid.value not in _opened_programs:
-            _opened_programs.add(pid.value)
+        pid = win_common.get_pid(app.hwnd)
+        if pid not in _opened_programs:
+            _opened_programs.add(pid)
 
     write_entry("Starting message thread...")
     _message_thread = threading.Thread(target=_message_thread_func, daemon=True)
@@ -142,18 +114,17 @@ def start_listener() -> None:
 
 def stop_listener() -> None:
     global _message_thread
-    global _hook_create
-    global _hook_destroy
-
-    write_entry("Stopping hooks...")
-    ctypes.windll.user32.UnhookWinEvent(_hook_create)
-    ctypes.windll.user32.UnhookWinEvent(_hook_destroy)
 
     write_entry("Stopping message thread...")
     if _message_thread is None or _message_thread.native_id is None:
-        write_entry("Thread not accessible")
+        write_entry("Thread not accessible", LogLevel.WARNING)
         return
     
     thread_id = _message_thread.native_id
-    ctypes.windll.user32.PostThreadMessageW(thread_id, _WM_QUIT, 0,0)
+    win_event_loop.stop_listener(thread_id)
+    _message_thread.join(timeout=5.0)
+    if _message_thread.is_alive():
+        _message_thread = None
+        raise RuntimeError(f"Thread {thread_id} did not stop in time")
+    
     write_entry("All stopped!")
