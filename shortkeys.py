@@ -9,11 +9,11 @@ logger.write_entry("Starting shortkeys")
 logger.write_entry("Initializing AppOpener")
 AppOpener.mklist(output=False)
 
-logger.write_entry("Initializing Launch Listener")
-launch_listener.start_listener()
+logger.write_entry("Initializing Hotkey Listener")
+hotkey_listener.start_hotkey_listener()
 
 logger.write_entry("Initializing Launch Listener")
-hotkey_listener.start_hotkey_listener()
+launch_listener.start_listener()
 
 def _shutdown() -> None:
     logger.write_entry("Shutting down launch listener")
