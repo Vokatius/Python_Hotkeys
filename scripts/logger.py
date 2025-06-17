@@ -9,6 +9,11 @@ from datetime import datetime
 from scripts import config_loader
 from scripts.log_levels import LogLevel
 
+#
+#   This whole logger is vibecoded. It may be messy, but I didnt want to spend much time on it.
+#   Be warned, here be dragons, lol
+#
+
 _LOG_DIR = os.path.join(os.path.dirname(__file__), "logs")
 os.makedirs(_LOG_DIR, exist_ok=True)
 
