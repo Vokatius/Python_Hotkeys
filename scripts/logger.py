@@ -115,6 +115,7 @@ def _handle_exception(exc_type, exc_value, exc_traceback):
 
     finally:
         time.sleep(0.5)
+        write_entry(f"Exception caught in logger thread. Exiting program immediately!", LogLevel.CRITICAL)
         os._exit(1)
 
 def thread_excepthook(args):
@@ -147,6 +148,7 @@ def thread_excepthook(args):
 
     finally:
         time.sleep(0.5)
+        write_entry(f"Exception caught in logger thread. Exiting program immediately!", LogLevel.CRITICAL)
         os._exit(1)
 
 sys.excepthook = _handle_exception

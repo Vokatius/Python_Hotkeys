@@ -6,6 +6,7 @@
 title = 'Custom Hotkeys'
 enable_logging = true
 disabled_log_levels = ['VERBOSE']                       # Allowed values are: 'VERBOSE', 'INFO', 'DEBUG', 'WARNING', 'ERROR', 'CRITICAL'
+supress_hotkey_presses = true                           # Hides pressed hotkeys from windows
 workspace_ignores_pinned = [1,2,4,5,6,7,8,9]            # Sets which workspaces ignore pinned windows as open for default programs
 
 
