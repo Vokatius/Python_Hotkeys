@@ -333,3 +333,18 @@ class WinObjectIdentifiers(IntEnum):
     OBJID_SOUND	    = 0xFFFFFFF5
     OBJID_QUERYCLASSNAMEIDX = 0xFFFFFFF4
     OBJID_NATIVEOM	= 0xFFFFFFF0
+
+class LowLevelHook(IntEnum):
+    WH_KEYBOARD         =  2  # Monitors keystroke messages
+    WH_GETMESSAGE       =  3  # Monitors messages posted to a message queue
+    WH_CALLWNDPROC      =  4  # Monitors messages before delivery to window procs
+    WH_CBT              =  5  # Monitors notifications for CBT apps
+    WH_MSGFILTER        = -1  # Monitors dialog, menu, or scroll messages for current app
+    WH_CALLWNDPROCRET   = 12  # Monitors messages after delivery to window procs
+    WH_DEBUG            =  9  # Hook for debugging other hook procedures
+    WH_FOREGROUNDIDLE   = 11  # Notifies when foreground thread is idle
+    WH_SHELL            = 10  # Monitors shell notifications
+    WH_SYSMSGFILTER     =  6  # Monitors system-wide dialog, menu, or scroll messages
+    WH_MOUSE            =  7  # Monitors mouse messages
+    WH_KEYBOARD_LL      = 13  # Monitors low-level keyboard events
+    WH_MOUSE_LL         = 14  # Monitors low-level mouse events
