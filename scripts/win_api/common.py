@@ -19,3 +19,7 @@ def get_name(pid: int) -> str|None:
         return psutil.Process(pid).name().lower()
     except psutil.NoSuchProcess:
         return None
+    
+def get_module_handle(module : wintypes.LPCWSTR|None = None) -> wintypes.HANDLE|None:
+    """ Returns the handle of a module. If module is None, returns the handle of the current process. """
+    return ctypes.windll.kernel32.GetModuleHandleW(module)
