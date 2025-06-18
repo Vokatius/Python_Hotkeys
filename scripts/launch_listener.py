@@ -1,7 +1,7 @@
 from scripts.window_manipulation import open_program
 from scripts.hotkey_functions import workspace
 from scripts.win_api.event_codes import WinEvent, WinEventFlags, WinEventMessages, WinObjectIdentifiers
-from scripts.win_api import win_event_loop, win_common
+from scripts.win_api import common, win_event_loop, event_listener
 from scripts import config_loader
 from scripts.logger import write_entry, LogLevel
 from threading import Thread
@@ -17,7 +17,7 @@ _message_thread: Thread|None = None
 
 def _on_window_event(event: WinEvent, hwnd: int, object_id: WinObjectIdentifiers|int, child_id: int, thread_id: int, event_time: datetime):
     if event == WinEvent.EVENT_OBJECT_DESTROY:
-        pid = win_common.get_pid(hwnd)
+        pid = common.get_pid(hwnd)
 
         global _opened_programs
         if pid in _opened_programs:
@@ -46,10 +46,10 @@ def _find_window_thread_func(hwnd: int) ->  None:
         write_entry(f"Could not open window with HWND: {hwnd}", LogLevel.VERBOSE)
         return
     
-    pid = win_common.get_pid(app.hwnd)
+    pid = common.get_pid(app.hwnd)
     app_id = open_program.get_app_id(app.app_id)
     if app_id is None:
-        name =  win_common.get_name(pid)
+        name =  common.get_name(pid)
         name = "UNKNOWN" if name is None else name
         write_entry(f"UNKNOWN APP - HWND: {hwnd} - PID: {pid} - Executable: {name}", LogLevel.WARNING)
         return
@@ -71,13 +71,13 @@ def _message_thread_func() -> None:
     cb = win_event_loop.create_WinEventProcType(_on_window_event)
 
     write_entry("Starting hooks...")
-    create_handle = win_event_loop.create_simple_hook (
+    create_handle = win_event_loop.create_simple_window_hook (
         WinEvent.EVENT_OBJECT_SHOW, 
         WinEvent.EVENT_OBJECT_SHOW, 
         cb
     )
     
-    destroy_handle = win_event_loop.create_simple_hook (
+    destroy_handle = win_event_loop.create_simple_window_hook (
         WinEvent.EVENT_OBJECT_DESTROY, 
         WinEvent.EVENT_OBJECT_DESTROY, 
         cb
@@ -85,7 +85,7 @@ def _message_thread_func() -> None:
 
     write_entry(f"Created handle: {create_handle}")
 
-    start_listener = win_event_loop.create_listener (
+    start_listener = event_listener.create_listener (
         WinEventMessages.WM_NULL,
         WinEventMessages.WM_NULL
     )
@@ -94,8 +94,8 @@ def _message_thread_func() -> None:
     start_listener()
 
     write_entry("Stopping hooks...")
-    win_event_loop.drop_hook(create_handle)
-    win_event_loop.drop_hook(destroy_handle)
+    win_event_loop.drop_win_hook(create_handle)
+    win_event_loop.drop_win_hook(destroy_handle)
 
 def start_listener() -> None:
     global _opened_programs
@@ -103,7 +103,7 @@ def start_listener() -> None:
 
     write_entry("Starting listener...")
     for app in get_apps_by_z_order(current_desktop=False):
-        pid = win_common.get_pid(app.hwnd)
+        pid = common.get_pid(app.hwnd)
         if pid not in _opened_programs:
             _opened_programs.add(pid)
 
@@ -121,7 +121,7 @@ def stop_listener() -> None:
         return
     
     thread_id = _message_thread.native_id
-    win_event_loop.stop_listener(thread_id)
+    event_listener.stop_listener(thread_id)
     _message_thread.join(timeout=5.0)
     if _message_thread.is_alive():
         _message_thread = None
