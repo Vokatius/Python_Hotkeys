@@ -21,6 +21,9 @@ def get_disabled_log_levels() -> list[LogLevel]:
 
     return ret
 
+def get_block_hotkey_presses() -> bool:
+    return CONFIG['general']['supress_hotkey_presses']
+
 def get_script_name() -> str:
     return  CONFIG['general']['title']
 
