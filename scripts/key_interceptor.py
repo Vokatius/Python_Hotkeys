@@ -18,6 +18,10 @@ _KEY_SIDES: dict[str, tuple[str|None, str|None]] = {
 
 hotkey: TypeAlias = frozenset[int]
 
+_hotkey_funcs: dict[hotkey, Callable[[], None]] = {}
+_pressed_keys: set[int] = set()
+_interceptor_thread: Thread|None = None
+
 def get_hotkey(hotkey_str: str) -> set[hotkey]:
     """
     Gets a decoded hotkey from a string. 
@@ -47,10 +51,6 @@ def get_hotkey(hotkey_str: str) -> set[hotkey]:
 
     return hotkey_list
 
-_hotkey_funcs: dict[hotkey, Callable[[], None]] = {}
-_pressed_keys: set[int] = set()
-_interceptor_thread: Thread|None = None
-
 def register_hotkey(hotkey_name: str, func: Callable[[], None]) -> None:
     write_entry(f"Registering hotkey {hotkey_name} with function {func.__name__}")
     if(hotkey_name not in _SHORTCUTS.keys()):
@@ -71,12 +71,6 @@ def register_hotkey_raw(hotkey_str: str, func: Callable[[], None]) -> None:
     for key_codes in get_hotkey(hotkey_str):
         _hotkey_funcs[key_codes] = func
     write_entry(f"Registration complete for raw hotkey {hotkey_str} with function {func.__name__}")
-
-def is_hotkey_pressed(keys = set[int]) -> bool:
-    if keys in _hotkey_funcs.keys():
-        return True
-
-    return False
 
 def _on_key_up(key_code: int) -> None:
     if key_code in _pressed_keys:
