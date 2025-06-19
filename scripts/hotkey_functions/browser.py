@@ -1,6 +1,6 @@
 from scripts.window_manipulation.foreground import send_to_foreground_name
-from scripts.window_manipulation.virtual_key_codes import VK_CODES
-from scripts.window_manipulation import send_key
+from scripts.win_api.virtual_key_codes import VK_CODES
+from scripts.win_api import send_key
 from scripts.logger import write_entry, LogLevel
 from scripts.hotkey_functions import workspace
 from scripts import config_loader

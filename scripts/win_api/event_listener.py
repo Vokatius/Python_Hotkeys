@@ -9,14 +9,14 @@ def create_listener(
             hwnd: int|None = None
         ) -> Callable[[], None]:
     """ 
-    Create a message loop to handle win events. Retuns a function that starts the listener. 
+    Create a message loop to handle win events. Retuns a *blocking* function that starts the listener. 
     For more details about the parameters see https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getmessagea
 
     :param wMsgFilterMin: Minimum event message to filter. Set both wMsgFilterMin & wMsgFilterMax to WM_NULL to listen for all events.
     :param wMsgFilterMax: Maximum event message to filter.
     :param hwnd: window handle to listen for events on. If None, listens for all windows.
 
-    :return: A function that starts the listener.
+    :return: A *blocking* function that starts the listener.
     """
     
     hwnd = 0 if hwnd is None else hwnd
@@ -24,9 +24,9 @@ def create_listener(
     def start() -> None:
         """ Starts the listener """
         msg = wintypes.MSG()
-        while ctypes.windll.user32.GetMessageA(ctypes.byref(msg), hwnd, wMsgFilterMin, wMsgFilterMax) != 0:
+        while ctypes.windll.user32.GetMessageW(ctypes.byref(msg), hwnd, wMsgFilterMin, wMsgFilterMax) != 0:
             ctypes.windll.user32.TranslateMessage(ctypes.byref(msg))
-            ctypes.windll.user32.DispatchMessageA(ctypes.byref(msg))
+            ctypes.windll.user32.DispatchMessageW(ctypes.byref(msg))
 
     return start
 

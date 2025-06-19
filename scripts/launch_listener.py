@@ -117,8 +117,7 @@ def stop_listener() -> None:
 
     write_entry("Stopping message thread...")
     if _message_thread is None or _message_thread.native_id is None:
-        write_entry("Thread not accessible", LogLevel.WARNING)
-        return
+        raise RuntimeError("_message_thread not accessible")
     
     thread_id = _message_thread.native_id
     event_listener.stop_listener(thread_id)
