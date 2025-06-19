@@ -4,11 +4,16 @@ from scripts.win_api.common import get_module_handle
 from typing import Callable, Literal, TypeAlias, NamedTuple, get_args, cast
 from scripts.logger import write_entry, LogLevel
 import ctypes
+import enum
 
 # https://learn.microsoft.com/en-us/windows/win32/api/winuser/nc-winuser-hookproc?utm_source=chatgpt.com
 LowLevelProcType = ctypes.WINFUNCTYPE(
     ctypes.c_longlong, wintypes.INT, wintypes.WPARAM, wintypes.LPARAM
 )
+
+class LL_callback_return(enum.Enum):
+    block_event = 1
+    pass_event = 2
 
 class KBDLLHOOKSTRUCT(ctypes.Structure):
     _fields_ = [
@@ -32,28 +37,32 @@ def create_low_level_hook(
 
     dwThreadId = wintypes.DWORD(0) if dwThreadId is None else dwThreadId
 
-
+    ctypes.windll.user32.CallNextHookEx.argtypes = [wintypes.HHOOK, ctypes.c_int, wintypes.WPARAM, wintypes.LPARAM]
+    ctypes.windll.user32.CallNextHookEx.restype  = ctypes.c_longlong
     hook = ctypes.windll.user32.SetWindowsHookExW(
         idHook,
         lpfn,
         hmod,
         dwThreadId
     )
-
+    if not hook:
+        raise ctypes.WinError(ctypes.get_last_error())
+    
     return hook
 
 def create_global_low_level_hook(        
         idHook: LowLevelHook,
         lpfn: Callable
     ) -> wintypes.HANDLE:
-    return create_low_level_hook(idHook, lpfn, get_module_handle(), wintypes.DWORD(0))
+    write_entry(f"Creating global low-level hook for idHook={idHook} with module {get_module_handle()}", LogLevel.DEBUG)
+    return create_low_level_hook(idHook, lpfn, None, wintypes.DWORD(0))
 
-def create_LowLevelProcType_Generic(callback: Callable[[int, wintypes.WPARAM, wintypes.LPARAM], bool]):
+def create_LowLevelProcType_Generic(callback: Callable[[int, wintypes.WPARAM, wintypes.LPARAM], LL_callback_return]):
     """
     Create a callback function that can be used with low-level hooks.
     For more details see: https://learn.microsoft.com/en-us/windows/win32/winmsg/about-hooks
 
-    callback(code: int, wParam: wintypes.WPARAM, lParam: wintypes.LPARAM) -> bool
+    callback(code: int, wParam: wintypes.WPARAM, lParam: wintypes.LPARAM) -> LL_callback_return
 
     callback parameters:
     - code: int                  = Event state code.
@@ -61,14 +70,15 @@ def create_LowLevelProcType_Generic(callback: Callable[[int, wintypes.WPARAM, wi
     - lParam: wintypes.LPARAM    = The event-specific data
 
     callback returns:
-    - bool = False to block the event from being passed to other hooks, True otherwise
+    - LL_callback_return = 'block_event' to block the event from being passed to other hooks
     """
     @LowLevelProcType
-    def ret(code: int, wParam: wintypes.WPARAM, lParam: wintypes.LPARAM) -> ctypes.c_longlong:
+    def ret(code: int, wParam: wintypes.WPARAM, lParam: wintypes.LPARAM) -> ctypes.c_longlong|int:
         call_next = callback(code, wParam, lParam)
 
         # Returning 1 blocks the event from being passed to other hooks
-        if not call_next: return ctypes.c_longlong(1)
+        if call_next == LL_callback_return.block_event: 
+            return 1
 
         # https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-callnexthookex
         return ctypes.windll.user32.CallNextHookEx(None, code, wParam, lParam)
@@ -83,7 +93,7 @@ class key_info(NamedTuple):
     time: int
     custom: int
 
-def create_LowLevelProcType_KeyboardLL(callback: Callable[[key_status, key_info], bool]):
+def create_LowLevelProcType_KeyboardLL(callback: Callable[[key_status, key_info], LL_callback_return]):
     """
     Create a callback function that can be used with low-level hooks for keyboard events.
     For more details see: https://learn.microsoft.com/en-us/windows/win32/winmsg/lowlevelkeyboardproc
@@ -91,20 +101,21 @@ def create_LowLevelProcType_KeyboardLL(callback: Callable[[key_status, key_info]
     callback (
         status: Literal[WinEventMessages.WM_KEYDOWN, WinEventMessages.WM_KEYUP, WinEventMessages.WM_SYSKEYDOWN, WinEventMessages.WM_SYSKEYUP], 
         info: key_info
-    ) -> bool
+    ) -> LL_callback_return
 
     callback returns:
-    - bool = False to block the event from being passed to other hooks, True otherwise
+    - LL_callback_return = 'block_event' to block the event from being passed to other hooks
     """
     @LowLevelProcType
-    def ret(code: int, wParam: wintypes.WPARAM, lParam: wintypes.LPARAM) -> ctypes.c_longlong:
+    def ret(code: int, wParam: wintypes.WPARAM, lParam: wintypes.LPARAM) -> ctypes.c_longlong|int:
         if code < 0:
             write_entry(f"LowLevelProcType_KeyboardLL: {code} < 0, calling CallNextHookEx() without processing the event.", LogLevel.DEBUG)
             return ctypes.windll.user32.CallNextHookEx(None, code, wParam, lParam)
 
         status = WinEventMessages(wParam)
-        if not isinstance(status, get_args(key_status)):
-            raise ctypes.WinError(descr=f"Invalid status: {status}\nExpected: {get_args(key_status)}")
+        if not status in [WinEventMessages.WM_KEYDOWN, WinEventMessages.WM_KEYUP, WinEventMessages.WM_SYSKEYDOWN, WinEventMessages.WM_SYSKEYUP]:
+            write_entry(f"Invalid status: {status}", LogLevel.VERBOSE)
+            return ctypes.windll.user32.CallNextHookEx(None, code, wParam, lParam)
         
         info_struct = KBDLLHOOKSTRUCT.from_address(int(lParam))
         info_tuple = key_info(
@@ -118,11 +129,13 @@ def create_LowLevelProcType_KeyboardLL(callback: Callable[[key_status, key_info]
         call_next = callback(cast(key_status, status), info_tuple)
 
         # Returning 1 blocks the event from being passed to other hooks
-        if not call_next: return ctypes.c_longlong(-1)
+        if call_next == LL_callback_return.block_event: 
+            return -1
 
         # https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-callnexthookex
         return ctypes.windll.user32.CallNextHookEx(None, code, wParam, lParam)
     
+    write_entry(f"Returning {ret} from low level hook loop")
     return ret
 
 def drop_low_level_hook(hook_handle: wintypes.HANDLE) -> None:
