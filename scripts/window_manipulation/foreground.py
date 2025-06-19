@@ -1,6 +1,6 @@
-from scripts.window_manipulation.virtual_key_codes import VK_CODES
+from scripts.win_api.virtual_key_codes import VK_CODES
 from scripts.logger import write_entry, LogLevel
-from scripts.window_manipulation import send_key
+from scripts.win_api import send_key
 from scripts.window_manipulation import open_program
 from pyvda import get_apps_by_z_order
 
