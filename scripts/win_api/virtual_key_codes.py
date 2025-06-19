@@ -178,7 +178,7 @@ VK_CODES: dict[str, int] = {
     "Z":                0x5A #Z key
 }
 
-KEY_TO_VK: dict[str, int]= {
+CONFIG_STR_TO_VK: dict[str, int]= {
     "<alt>":             VK_CODES["MENU"],
     "<alt_l>":           VK_CODES["LMENU"],
     "<alt_r>":           VK_CODES["RMENU"],
@@ -222,3 +222,4 @@ KEY_TO_VK: dict[str, int]= {
     "<tab>":             VK_CODES["TAB"],
     "<up>":              VK_CODES["UP"],
 }
+
