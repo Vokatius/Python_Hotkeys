@@ -47,24 +47,9 @@ def get_hotkey(hotkey_str: str) -> set[hotkey]:
 
     return hotkey_list
 
-def get_hotkeys(hotkeys: dict[Any, str]) -> set[hotkey]:
-    hotkey_list: set[hotkey] = set()
-
-    for hotkey_str in hotkeys.values():
-        write_entry(f"Building hotkeys Current: {hotkey_str}")
-        if hotkey_str is False:
-            continue
-
-        hotkey_list = hotkey_list.union((get_hotkey(hotkey_str)))
-
-    return hotkey_list
-
-_HOTKEY_STATES: set[hotkey] = get_hotkeys(config_loader.get_workspace_hotkeys()) | get_hotkeys(config_loader.get_hotkeys())
 _hotkey_funcs: dict[hotkey, Callable[[], None]] = {}
 _pressed_keys: set[int] = set()
 _interceptor_thread: Thread|None = None
-
-write_entry(f"Loaded hotkeys: {_HOTKEY_STATES}", LogLevel.DEBUG)
 
 def register_hotkey(hotkey_name: str, func: Callable[[], None]) -> None:
     write_entry(f"Registering hotkey {hotkey_name} with function {func.__name__}")
@@ -88,7 +73,7 @@ def register_hotkey_raw(hotkey_str: str, func: Callable[[], None]) -> None:
     write_entry(f"Registration complete for raw hotkey {hotkey_str} with function {func.__name__}")
 
 def is_hotkey_pressed(keys = set[int]) -> bool:
-    if keys in _HOTKEY_STATES:
+    if keys in _hotkey_funcs.keys():
         return True
 
     return False
@@ -107,7 +92,7 @@ def _on_key_down(key_code: int) -> LL_callback_return:
 
     hotkey_pressed = hotkey(_pressed_keys)
 
-    if hotkey_pressed not in _HOTKEY_STATES:
+    if hotkey_pressed not in _hotkey_funcs.keys():
         return LL_callback_return.pass_event
     
     write_entry(f"{key_code} intercepted, hotkey {_pressed_keys} found!", LogLevel.INFO)
