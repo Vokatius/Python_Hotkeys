@@ -91,10 +91,6 @@ def _on_key_down(key_code: int) -> LL_callback_return:
     
     write_entry(f"{key_code} intercepted, hotkey {_pressed_keys} found!", LogLevel.INFO)
 
-    if not hotkey_pressed in _hotkey_funcs.keys():
-        write_entry(f"Hotkey {hotkey_pressed} has no associated function! - Hotkey functions registered: {_hotkey_funcs.keys()}", LogLevel.WARNING)
-        return LL_callback_return.pass_event
-
     dispatch_hotkey_func = Thread(target=_hotkey_funcs[hotkey_pressed], daemon=True)
     dispatch_hotkey_func.start()
 
