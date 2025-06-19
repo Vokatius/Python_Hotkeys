@@ -1,6 +1,6 @@
 from scripts.hotkey_functions import browser, last_window, workspace
 from scripts import config_loader
-from scripts.hotkey_listener import register_hotkey, register_hotkey_raw
+from scripts.key_interceptor import register_hotkey, register_hotkey_raw
 
 _app_ids = config_loader.get_applications()
 for (num, workspace_conf) in config_loader.get_workspace_config().items():
